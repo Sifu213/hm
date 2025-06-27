@@ -1151,11 +1151,11 @@
 			]
 		},
 		"hm.sol": {
-			"keccak256": "0x9cbcad9c3d25d9c6ab2790925cf74a2265ed6cb46043a1d98b02c71e950ca4d9",
+			"keccak256": "0x7157463dbf27165c8a5a2d6954c61a7034af07dfa077aa2fac5699a2310c8792",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://94cdf5db1ce8e364d49fb6853ae7b23f2df7e4715581246cd71f2292860450a7",
-				"dweb:/ipfs/QmRiZ8ma4aF76SJs8fMRAmTg3Yob3Znjhcbf46r8TRN8Ep"
+				"bzz-raw://1743578b96ffd07b26971f51b9cbc67efb87032882dc3c8dac324ed697cc92d3",
+				"dweb:/ipfs/QmTsX2PD6CRytjQVkWZCcLndNPrCQaZEG3nEEduMhK7HZ4"
 			]
 		}
 	},

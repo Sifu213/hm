@@ -4,19 +4,23 @@ pragma solidity ^0.8.19;
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
-contract HotMolandak is ERC721, Ownable {
+contract Bombandak is ERC721, Ownable {
     uint256 public constant MINT_PRICE = 5 ether; // 5 MON (assuming 18 decimals)
     uint256 public constant INITIAL_LIFETIME = 7 days;
     uint256 public constant TRANSFER_BONUS = 2 days;
-    uint256 public constant BURN_REWARD = 0.1 ether; // 0.1 MON reward for burning expired NFTs
     
     uint256 private _tokenIdCounter;
+    
+    // URIs pour les métadonnées des NFTs
+    string private _baseTokenURIAlive;
+    string private _baseTokenURIDead;
     
     struct NFTData {
         uint256 expiryTime;
         uint256 transferCount;
         address[] ownerHistory;
         bool isAlive;
+        bool isDead; // Nouveau: état mort (non-transférable mais pas burn)
     }
     
     mapping(uint256 => NFTData) public nftData;
@@ -24,13 +28,16 @@ contract HotMolandak is ERC721, Ownable {
     
     event NFTMinted(uint256 indexed tokenId, address indexed to, uint256 expiryTime);
     event NFTTransferred(uint256 indexed tokenId, address indexed from, address indexed to, uint256 newExpiryTime, uint256 transferCount);
-    event NFTBurned(uint256 indexed tokenId, address indexed burner, string reason);
-    event NFTExpired(uint256 indexed tokenId);
+    event NFTDied(uint256 indexed tokenId, address indexed killer, string reason);
     
-    constructor() ERC721("HotMolandak", "HMDK") Ownable(msg.sender) {}
+    constructor(string memory baseTokenURIAlive, string memory baseTokenURIDead) 
+        ERC721("Bombandak", "BMDK") Ownable(msg.sender) {
+        _baseTokenURIAlive = baseTokenURIAlive;
+        _baseTokenURIDead = baseTokenURIDead;
+    }
     
     modifier onlyAlive(uint256 tokenId) {
-        require(nftData[tokenId].isAlive, "NFT is dead");
+        require(nftData[tokenId].isAlive && !nftData[tokenId].isDead, "NFT is dead");
         require(block.timestamp < nftData[tokenId].expiryTime, "NFT has expired");
         _;
     }
@@ -49,6 +56,7 @@ contract HotMolandak is ERC721, Ownable {
         nftData[tokenId].transferCount = 0;
         nftData[tokenId].ownerHistory.push(msg.sender);
         nftData[tokenId].isAlive = true;
+        nftData[tokenId].isDead = false;
         
         hasMinted[msg.sender] = true;
         
@@ -64,7 +72,7 @@ contract HotMolandak is ERC721, Ownable {
         address[] memory history = nftData[tokenId].ownerHistory;
         for (uint i = 0; i < history.length; i++) {
             if (history[i] == to) {
-                _burnNFT(tokenId, "Transferred to previous owner");
+                _killNFT(tokenId, "Transferred to previous owner");
                 return;
             }
         }
@@ -80,29 +88,49 @@ contract HotMolandak is ERC721, Ownable {
         emit NFTTransferred(tokenId, msg.sender, to, nftData[tokenId].expiryTime, nftData[tokenId].transferCount);
     }
     
-    function burnExpiredNFTs(uint256[] calldata tokenIds) external {
-        uint256 burnCount = 0;
-        
+    // Nouvelle fonction pour "tuer" un NFT sans le burn
+    function _killNFT(uint256 tokenId, string memory reason) internal {
+        nftData[tokenId].isAlive = false;
+        nftData[tokenId].isDead = true;
+        emit NFTDied(tokenId, msg.sender, reason);
+    }
+    
+    // Fonction publique pour marquer les NFTs expirés comme morts
+    function markExpiredNFTs(uint256[] calldata tokenIds) external {
         for (uint i = 0; i < tokenIds.length; i++) {
             uint256 tokenId = tokenIds[i];
             
-            if (nftData[tokenId].isAlive && block.timestamp >= nftData[tokenId].expiryTime) {
-                _burnNFT(tokenId, "Expired");
-                burnCount++;
+            // Vérifier que le NFT existe et est expiré
+            if (nftData[tokenId].isAlive && 
+                !nftData[tokenId].isDead && 
+                block.timestamp >= nftData[tokenId].expiryTime) {
+                _killNFT(tokenId, "Expired");
             }
-        }
-        
-        if (burnCount > 0) {
-            uint256 reward = burnCount * BURN_REWARD;
-            require(address(this).balance >= reward, "Insufficient contract balance");
-            payable(msg.sender).transfer(reward);
         }
     }
     
-    function _burnNFT(uint256 tokenId, string memory reason) internal {
-        nftData[tokenId].isAlive = false;
-        _burn(tokenId);
-        emit NFTBurned(tokenId, msg.sender, reason);
+    // Override du tokenURI pour images dynamiques
+    function tokenURI(uint256 tokenId) public view override returns (string memory) {
+        require(_ownerOf(tokenId) != address(0), "Token does not exist");
+        
+        NFTData memory data = nftData[tokenId];
+        
+        // Si le NFT est mort ou expiré, retourner l'URI "dead"
+        if (data.isDead || !data.isAlive || block.timestamp >= data.expiryTime) {
+            return _baseTokenURIDead;
+        }
+        
+        // Sinon retourner l'URI "alive"
+        return _baseTokenURIAlive;
+    }
+    
+    // Fonctions pour mettre à jour les URIs (owner only)
+    function setBaseTokenURIAlive(string memory newURI) external onlyOwner {
+        _baseTokenURIAlive = newURI;
+    }
+    
+    function setBaseTokenURIDead(string memory newURI) external onlyOwner {
+        _baseTokenURIDead = newURI;
     }
     
     // View functions
@@ -111,6 +139,7 @@ contract HotMolandak is ERC721, Ownable {
         uint256 transferCount,
         address[] memory ownerHistory,
         bool isAlive,
+        bool isDead,
         uint256 timeLeft
     ) {
         NFTData memory data = nftData[tokenId];
@@ -121,6 +150,7 @@ contract HotMolandak is ERC721, Ownable {
             data.transferCount,
             data.ownerHistory,
             data.isAlive,
+            data.isDead,
             remainingTime
         );
     }
@@ -130,7 +160,9 @@ contract HotMolandak is ERC721, Ownable {
         uint256 expiredCount = 0;
         
         for (uint256 i = 1; i <= _tokenIdCounter; i++) {
-            if (nftData[i].isAlive && block.timestamp >= nftData[i].expiryTime) {
+            if (nftData[i].isAlive && 
+                !nftData[i].isDead && 
+                block.timestamp >= nftData[i].expiryTime) {
                 expired[expiredCount] = i;
                 expiredCount++;
             }
@@ -145,12 +177,40 @@ contract HotMolandak is ERC721, Ownable {
         return result;
     }
     
+    function getDeadNFTs() external view returns (uint256[] memory) {
+        uint256[] memory dead = new uint256[](_tokenIdCounter);
+        uint256 deadCount = 0;
+        
+        for (uint256 i = 1; i <= _tokenIdCounter; i++) {
+            if (nftData[i].isDead || !nftData[i].isAlive) {
+                dead[deadCount] = i;
+                deadCount++;
+            }
+        }
+        
+        // Resize array to actual count
+        uint256[] memory result = new uint256[](deadCount);
+        for (uint256 i = 0; i < deadCount; i++) {
+            result[i] = dead[i];
+        }
+        
+        return result;
+    }
+    
     function getTotalSupply() external view returns (uint256) {
         return _tokenIdCounter;
     }
     
     function isNFTAlive(uint256 tokenId) external view returns (bool) {
-        return nftData[tokenId].isAlive && block.timestamp < nftData[tokenId].expiryTime;
+        return nftData[tokenId].isAlive && 
+               !nftData[tokenId].isDead && 
+               block.timestamp < nftData[tokenId].expiryTime;
+    }
+    
+    function isNFTDead(uint256 tokenId) external view returns (bool) {
+        return nftData[tokenId].isDead || 
+               !nftData[tokenId].isAlive || 
+               block.timestamp >= nftData[tokenId].expiryTime;
     }
     
     // Emergency functions
@@ -160,10 +220,12 @@ contract HotMolandak is ERC721, Ownable {
         payable(owner()).transfer(balance);
     }
     
-    function emergencyBurn(uint256 tokenId) external onlyOwner {
-        _burnNFT(tokenId, "Emergency burn");
+    function emergencyKill(uint256 tokenId) external onlyOwner {
+        _killNFT(tokenId, "Emergency kill");
     }
     
-    // Allow the contract to receive ETH for rewards
+
+    
+    // Allow the contract to receive ETH
     receive() external payable {}
 }
