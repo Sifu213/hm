@@ -795,6 +795,11 @@
 				"outputs": [
 					{
 						"internalType": "uint256",
+						"name": "mintTime",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
 						"name": "expiryTime",
 						"type": "uint256"
 					},
@@ -1355,11 +1360,11 @@
 			]
 		},
 		"hm.sol": {
-			"keccak256": "0x832e456ab0822d66e63a646c757228dd6064090b3c7f1538b7daa3d840335298",
+			"keccak256": "0xc413fa0f92e7d7d82e3911adc72107156fcba236dd0a799f7c5239a9c4309d0a",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://a7cb3c2f43520662fad99c5e3bccc860052511e3782d92a4af286a8d9876a877",
-				"dweb:/ipfs/QmX7hhsJeb3rFhkUAFWaBhoLxrWwLbVZ5U8HReQ3tWu5Ti"
+				"bzz-raw://4adb3bf48990b90d958f8e757790778a9e510c7e84e7727da9863aafa3b2572b",
+				"dweb:/ipfs/QmeEdb7MaWAKEt9nYxXD2PKkaHD9pPHkDtyzxuuvNiasqy"
 			]
 		}
 	},

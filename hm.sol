@@ -22,6 +22,7 @@ contract Bombadak is ERC721, Ownable {
     string private _baseTokenURIDead;
     
     struct NFTData {
+        uint256 mintTime; 
         uint256 expiryTime;
         uint256 transferCount;
         address[] ownerHistory;
@@ -62,6 +63,7 @@ contract Bombadak is ERC721, Ownable {
         _safeMint(msg.sender, tokenId);
         
         // Initialize NFT data
+        nftData[tokenId].mintTime = block.timestamp;
         nftData[tokenId].expiryTime = block.timestamp + INITIAL_LIFETIME;
         nftData[tokenId].transferCount = 0;
         nftData[tokenId].ownerHistory.push(msg.sender);
