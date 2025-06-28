@@ -4,12 +4,18 @@ pragma solidity ^0.8.19;
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
-contract Bombandak is ERC721, Ownable {
-    uint256 public constant MINT_PRICE = 5 ether; // 5 MON (assuming 18 decimals)
-    uint256 public constant INITIAL_LIFETIME = 7 days;
-    uint256 public constant TRANSFER_BONUS = 2 days;
+contract Bombadak is ERC721, Ownable {
+    uint256 public constant MINT_PRICE = 1 ether;
+    uint256 public constant INITIAL_LIFETIME = 1 days;
+    uint256 public constant TRANSFER_BONUS = 1 days;
+    uint256 public constant MAX_SUPPLY = 100;
     
     uint256 private _tokenIdCounter;
+    bool public gameEnded = false;
+    
+    // Tracking du champion de longévité
+    uint256 public longestLivingTokenId = 0;
+    uint256 public longestLifetime = 0;
     
     // URIs pour les métadonnées des NFTs
     string private _baseTokenURIAlive;
@@ -29,9 +35,11 @@ contract Bombandak is ERC721, Ownable {
     event NFTMinted(uint256 indexed tokenId, address indexed to, uint256 expiryTime);
     event NFTTransferred(uint256 indexed tokenId, address indexed from, address indexed to, uint256 newExpiryTime, uint256 transferCount);
     event NFTDied(uint256 indexed tokenId, address indexed killer, string reason);
+    event GameEnded(uint256 indexed championTokenId, uint256 totalRewards, uint256 winnersCount);
+    event RewardDistributed(address indexed winner, uint256 amount);
     
     constructor(string memory baseTokenURIAlive, string memory baseTokenURIDead) 
-        ERC721("Bombandak", "BMDK") Ownable(msg.sender) {
+        ERC721("Bombadak", "BMDK") Ownable(msg.sender) {
         _baseTokenURIAlive = baseTokenURIAlive;
         _baseTokenURIDead = baseTokenURIDead;
     }
@@ -45,6 +53,8 @@ contract Bombandak is ERC721, Ownable {
     function mint() external payable {
         require(msg.value == MINT_PRICE, "Incorrect mint price");
         require(!hasMinted[msg.sender], "Already minted");
+        require(_tokenIdCounter < MAX_SUPPLY, "Maximum supply reached");
+        require(!gameEnded, "Game has ended");
         
         _tokenIdCounter++;
         uint256 tokenId = _tokenIdCounter;
@@ -90,8 +100,18 @@ contract Bombandak is ERC721, Ownable {
     
     // Nouvelle fonction pour "tuer" un NFT sans le burn
     function _killNFT(uint256 tokenId, string memory reason) internal {
+        // Calculer la durée de vie totale avant de tuer le NFT
+        uint256 totalLifetime = nftData[tokenId].transferCount * TRANSFER_BONUS + INITIAL_LIFETIME;
+        
+        // Vérifier si c'est un nouveau record de longévité
+        if (totalLifetime > longestLifetime) {
+            longestLifetime = totalLifetime;
+            longestLivingTokenId = tokenId;
+        }
+        
         nftData[tokenId].isAlive = false;
         nftData[tokenId].isDead = true;
+        nftData[tokenId].expiryTime = block.timestamp; // Mettre le temps de vie à zéro
         emit NFTDied(tokenId, msg.sender, reason);
     }
     
@@ -214,18 +234,77 @@ contract Bombandak is ERC721, Ownable {
     }
     
     // Emergency functions
-    function withdraw() external onlyOwner {
-        uint256 balance = address(this).balance;
-        require(balance > 0, "No funds to withdraw");
-        payable(owner()).transfer(balance);
+    // Fonction pour terminer le jeu et distribuer les récompenses
+    function endGameAndDistribute() external onlyOwner {
+        require(!gameEnded, "Game already ended");
+        require(_tokenIdCounter == MAX_SUPPLY, "Not all NFTs minted yet");
+        require(areAllNFTsDead(), "Not all NFTs are dead yet");
+        require(longestLivingTokenId > 0, "No champion found");
+        
+        gameEnded = true;
+        
+        // Récupérer la liste des gagnants (propriétaires du NFT champion)
+        address[] memory winners = nftData[longestLivingTokenId].ownerHistory;
+        uint256 totalRewards = address(this).balance;
+        uint256 rewardPerWinner = totalRewards / winners.length;
+        
+        // Distribuer les récompenses
+        for (uint i = 0; i < winners.length; i++) {
+            if (rewardPerWinner > 0) {
+                payable(winners[i]).transfer(rewardPerWinner);
+                emit RewardDistributed(winners[i], rewardPerWinner);
+            }
+        }
+        
+        emit GameEnded(longestLivingTokenId, totalRewards, winners.length);
+    }
+    
+    // Fonction pour vérifier si tous les NFTs sont morts
+    function areAllNFTsDead() public view returns (bool) {
+        for (uint256 i = 1; i <= _tokenIdCounter; i++) {
+            if (nftData[i].isAlive && !nftData[i].isDead && block.timestamp < nftData[i].expiryTime) {
+                return false;
+            }
+        }
+        return true;
     }
     
     function emergencyKill(uint256 tokenId) external onlyOwner {
         _killNFT(tokenId, "Emergency kill");
     }
     
-
+    function emergencyWithdraw() external onlyOwner {
+        uint256 balance = address(this).balance;
+        require(balance > 0, "No funds to withdraw");
+        payable(owner()).transfer(balance);
+    }
     
     // Allow the contract to receive ETH
+        // Fonction withdraw modifiée (seulement si le jeu est terminé)
+    function withdraw() external onlyOwner {
+        require(gameEnded, "Cannot withdraw before game ends");
+        uint256 balance = address(this).balance;
+        require(balance > 0, "No funds to withdraw");
+        payable(owner()).transfer(balance);
+    }
+    
+    // Nouvelle fonction pour voir les infos du champion
+    function getChampionInfo() external view returns (
+        uint256 tokenId,
+        uint256 lifetime,
+        address[] memory owners,
+        uint256 transferCount
+    ) {
+        if (longestLivingTokenId == 0) {
+            return (0, 0, new address[](0), 0);
+        }
+        
+        return (
+            longestLivingTokenId,
+            longestLifetime,
+            nftData[longestLivingTokenId].ownerHistory,
+            nftData[longestLivingTokenId].transferCount
+        );
+    }
     receive() external payable {}
 }

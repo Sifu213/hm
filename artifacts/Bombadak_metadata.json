@@ -202,6 +202,31 @@
 					{
 						"indexed": true,
 						"internalType": "uint256",
+						"name": "championTokenId",
+						"type": "uint256"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "totalRewards",
+						"type": "uint256"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "winnersCount",
+						"type": "uint256"
+					}
+				],
+				"name": "GameEnded",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "uint256",
 						"name": "tokenId",
 						"type": "uint256"
 					},
@@ -308,6 +333,25 @@
 					{
 						"indexed": true,
 						"internalType": "address",
+						"name": "winner",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "amount",
+						"type": "uint256"
+					}
+				],
+				"name": "RewardDistributed",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "address",
 						"name": "from",
 						"type": "address"
 					},
@@ -330,6 +374,19 @@
 			{
 				"inputs": [],
 				"name": "INITIAL_LIFETIME",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "MAX_SUPPLY",
 				"outputs": [
 					{
 						"internalType": "uint256",
@@ -385,6 +442,19 @@
 				"type": "function"
 			},
 			{
+				"inputs": [],
+				"name": "areAllNFTsDead",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
 				"inputs": [
 					{
 						"internalType": "address",
@@ -417,6 +487,33 @@
 				"type": "function"
 			},
 			{
+				"inputs": [],
+				"name": "emergencyWithdraw",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "endGameAndDistribute",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "gameEnded",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
 				"inputs": [
 					{
 						"internalType": "uint256",
@@ -430,6 +527,34 @@
 						"internalType": "address",
 						"name": "",
 						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "getChampionInfo",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "tokenId",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "lifetime",
+						"type": "uint256"
+					},
+					{
+						"internalType": "address[]",
+						"name": "owners",
+						"type": "address[]"
+					},
+					{
+						"internalType": "uint256",
+						"name": "transferCount",
+						"type": "uint256"
 					}
 				],
 				"stateMutability": "view",
@@ -594,6 +719,32 @@
 						"internalType": "bool",
 						"name": "",
 						"type": "bool"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "longestLifetime",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "longestLivingTokenId",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
 					}
 				],
 				"stateMutability": "view",
@@ -1204,11 +1355,11 @@
 			]
 		},
 		"hm.sol": {
-			"keccak256": "0xda2cc2105aa64d3e77250df8cfb1a1cf5c08a8e63e3eab68ef63dce47819a95b",
+			"keccak256": "0x832e456ab0822d66e63a646c757228dd6064090b3c7f1538b7daa3d840335298",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://c1967d9243ce3869afd186e3cb04d8dcf7a42ce401ceddc5ae4684c472b89e14",
-				"dweb:/ipfs/QmZpZMscUqRWdMGMnas2iHRw1F4nViBfVTtcU2cSKTs3w5"
+				"bzz-raw://a7cb3c2f43520662fad99c5e3bccc860052511e3782d92a4af286a8d9876a877",
+				"dweb:/ipfs/QmX7hhsJeb3rFhkUAFWaBhoLxrWwLbVZ5U8HReQ3tWu5Ti"
 			]
 		}
 	},
