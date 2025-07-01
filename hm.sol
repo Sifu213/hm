@@ -38,6 +38,7 @@ contract Bombadak is ERC721, Ownable {
     event NFTDied(uint256 indexed tokenId, address indexed killer, string reason);
     event GameEnded(uint256 indexed championTokenId, uint256 totalRewards, uint256 winnersCount);
     event RewardDistributed(address indexed winner, uint256 amount);
+    event RewardPoolIncreased(address indexed contributor, uint256 amount, uint256 newTotal);
     
     constructor(string memory baseTokenURIAlive, string memory baseTokenURIDead) 
         ERC721("Bombadak", "BMDK") Ownable(msg.sender) {
@@ -129,6 +130,27 @@ contract Bombadak is ERC721, Ownable {
                 _killNFT(tokenId, "Expired");
             }
         }
+    }
+    
+    // NOUVELLE FONCTION: Ajouter des MON à la reward pool
+    function addToRewardPool() external payable onlyOwner {
+        require(msg.value > 0, "Must send MON to add to reward pool");
+        require(!gameEnded, "Cannot add to reward pool after game has ended");
+        
+        emit RewardPoolIncreased(msg.sender, msg.value, address(this).balance);
+    }
+    
+    // Fonction alternative pour ajouter un montant spécifique
+    function addToRewardPoolWithAmount() external payable onlyOwner {
+        require(msg.value > 0, "Must send MON to add to reward pool");
+        require(!gameEnded, "Cannot add to reward pool after game has ended");
+        
+        emit RewardPoolIncreased(msg.sender, msg.value, address(this).balance);
+    }
+    
+    // Fonction pour voir le montant total dans la reward pool
+    function getRewardPoolBalance() external view returns (uint256) {
+        return address(this).balance;
     }
     
     // Override du tokenURI pour images dynamiques

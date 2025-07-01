@@ -352,6 +352,31 @@
 					{
 						"indexed": true,
 						"internalType": "address",
+						"name": "contributor",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "amount",
+						"type": "uint256"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "newTotal",
+						"type": "uint256"
+					}
+				],
+				"name": "RewardPoolIncreased",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "address",
 						"name": "from",
 						"type": "address"
 					},
@@ -421,6 +446,20 @@
 					}
 				],
 				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "addToRewardPool",
+				"outputs": [],
+				"stateMutability": "payable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "addToRewardPoolWithAmount",
+				"outputs": [],
+				"stateMutability": "payable",
 				"type": "function"
 			},
 			{
@@ -624,6 +663,19 @@
 					{
 						"internalType": "uint256",
 						"name": "timeLeft",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "getRewardPoolBalance",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
 						"type": "uint256"
 					}
 				],
@@ -1360,11 +1412,11 @@
 			]
 		},
 		"hm.sol": {
-			"keccak256": "0xc413fa0f92e7d7d82e3911adc72107156fcba236dd0a799f7c5239a9c4309d0a",
+			"keccak256": "0x836db7a68cd937e58d4edb3431f2a99507524efe90f7e820a967f8de741a8a41",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://4adb3bf48990b90d958f8e757790778a9e510c7e84e7727da9863aafa3b2572b",
-				"dweb:/ipfs/QmeEdb7MaWAKEt9nYxXD2PKkaHD9pPHkDtyzxuuvNiasqy"
+				"bzz-raw://84b1096233df17dc90cad77409db446f260b1318dc38f436c152dc3cd75bc8f0",
+				"dweb:/ipfs/QmTcbg32Sb36gGHZkuN1fGtJKVhj3uqufdWxK6ZUy43P2E"
 			]
 		}
 	},
