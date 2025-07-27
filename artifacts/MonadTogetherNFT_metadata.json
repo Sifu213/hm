@@ -9,7 +9,17 @@
 				"inputs": [
 					{
 						"internalType": "string",
-						"name": "baseTokenURI_",
+						"name": "lightningURI",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "swiftURI",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "clutchURI",
 						"type": "string"
 					}
 				],
@@ -195,6 +205,25 @@
 				"anonymous": false,
 				"inputs": [
 					{
+						"indexed": false,
+						"internalType": "uint8",
+						"name": "level",
+						"type": "uint8"
+					},
+					{
+						"indexed": false,
+						"internalType": "string",
+						"name": "tokenURI",
+						"type": "string"
+					}
+				],
+				"name": "LevelTokenURISet",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
 						"indexed": true,
 						"internalType": "address",
 						"name": "previousOwner",
@@ -249,6 +278,12 @@
 						"internalType": "uint256",
 						"name": "tokenId",
 						"type": "uint256"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint8",
+						"name": "level",
+						"type": "uint8"
 					},
 					{
 						"indexed": false,
@@ -317,13 +352,90 @@
 				"type": "function"
 			},
 			{
-				"inputs": [],
-				"name": "getBaseTokenURI",
+				"inputs": [
+					{
+						"internalType": "uint8",
+						"name": "level",
+						"type": "uint8"
+					}
+				],
+				"name": "getLevelTokenURI",
 				"outputs": [
 					{
 						"internalType": "string",
 						"name": "",
 						"type": "string"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "tokenId",
+						"type": "uint256"
+					}
+				],
+				"name": "getTokenLevel",
+				"outputs": [
+					{
+						"internalType": "uint8",
+						"name": "",
+						"type": "uint8"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "getTotalSupplyByLevel",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "lightning",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "swift",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "clutch",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "user",
+						"type": "address"
+					}
+				],
+				"name": "getUserNFTCountByLevel",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "lightning",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "swift",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "clutch",
+						"type": "uint256"
 					}
 				],
 				"stateMutability": "view",
@@ -354,7 +466,70 @@
 				"type": "function"
 			},
 			{
-				"inputs": [],
+				"inputs": [
+					{
+						"internalType": "uint8",
+						"name": "",
+						"type": "uint8"
+					}
+				],
+				"name": "levelCounts",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "to",
+						"type": "address"
+					}
+				],
+				"name": "mintClutchVictoryNFT",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "to",
+						"type": "address"
+					}
+				],
+				"name": "mintLightningVictoryNFT",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint8",
+						"name": "level",
+						"type": "uint8"
+					}
+				],
 				"name": "mintMyVictoryNFT",
 				"outputs": [
 					{
@@ -372,6 +547,30 @@
 						"internalType": "address",
 						"name": "to",
 						"type": "address"
+					}
+				],
+				"name": "mintSwiftVictoryNFT",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "to",
+						"type": "address"
+					},
+					{
+						"internalType": "uint8",
+						"name": "level",
+						"type": "uint8"
 					}
 				],
 				"name": "mintVictoryNFT",
@@ -522,12 +721,17 @@
 			{
 				"inputs": [
 					{
+						"internalType": "uint8",
+						"name": "level",
+						"type": "uint8"
+					},
+					{
 						"internalType": "string",
-						"name": "newBaseTokenURI",
+						"name": "newTokenURI",
 						"type": "string"
 					}
 				],
-				"name": "setBaseTokenURI",
+				"name": "setLevelTokenURI",
 				"outputs": [],
 				"stateMutability": "nonpayable",
 				"type": "function"
@@ -572,6 +776,25 @@
 						"type": "uint256"
 					}
 				],
+				"name": "tokenLevel",
+				"outputs": [
+					{
+						"internalType": "uint8",
+						"name": "",
+						"type": "uint8"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "tokenId",
+						"type": "uint256"
+					}
+				],
 				"name": "tokenURI",
 				"outputs": [
 					{
@@ -597,6 +820,30 @@
 						"internalType": "uint256[]",
 						"name": "",
 						"type": "uint256[]"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "owner",
+						"type": "address"
+					}
+				],
+				"name": "tokensOfOwnerWithLevels",
+				"outputs": [
+					{
+						"internalType": "uint256[]",
+						"name": "tokenIds",
+						"type": "uint256[]"
+					},
+					{
+						"internalType": "uint8[]",
+						"name": "levels",
+						"type": "uint8[]"
 					}
 				],
 				"stateMutability": "view",
@@ -650,10 +897,33 @@
 				"outputs": [],
 				"stateMutability": "nonpayable",
 				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					},
+					{
+						"internalType": "uint8",
+						"name": "",
+						"type": "uint8"
+					}
+				],
+				"name": "userLevelCounts",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
 			}
 		],
 		"devdoc": {
-			"details": "Contrat NFT simple pour les victoires dans Monad Together - Mint gratuit - Pas de limite de nombre - Un wallet peut minter plusieurs fois - Image IPFS fixe pour tous les NFTs",
 			"errors": {
 				"ERC721IncorrectOwner(address,uint256,address)": [
 					{
@@ -755,30 +1025,94 @@
 				"constructor": {
 					"details": "Constructeur",
 					"params": {
-						"baseTokenURI_": "L'URI IPFS de base pour les métadonnées"
+						"clutchURI": "L'URI IPFS pour les NFT Clutch (niveau 1)",
+						"lightningURI": "L'URI IPFS pour les NFT Lightning (niveau 3)",
+						"swiftURI": "L'URI IPFS pour les NFT Swift (niveau 2)"
 					}
 				},
 				"getApproved(uint256)": {
 					"details": "See {IERC721-getApproved}."
 				},
-				"getBaseTokenURI()": {
-					"details": "Retourne l'URI de base actuel",
+				"getLevelTokenURI(uint8)": {
+					"details": "Retourne l'URI pour un niveau spécifique",
+					"params": {
+						"level": "Le niveau (1, 2, ou 3)"
+					},
 					"returns": {
-						"_0": "L'URI de base"
+						"_0": "L'URI du niveau"
+					}
+				},
+				"getTokenLevel(uint256)": {
+					"details": "Retourne le niveau d'un token",
+					"params": {
+						"tokenId": "L'ID du token"
+					},
+					"returns": {
+						"_0": "Le niveau du token"
+					}
+				},
+				"getTotalSupplyByLevel()": {
+					"details": "Retourne le nombre de NFTs mintés pour chaque niveau",
+					"returns": {
+						"clutch": "Le nombre de NFT Clutch (niveau 1)",
+						"lightning": "Le nombre de NFT Lightning (niveau 3)",
+						"swift": "Le nombre de NFT Swift (niveau 2)"
+					}
+				},
+				"getUserNFTCountByLevel(address)": {
+					"details": "Retourne le nombre de NFTs possédés par un utilisateur pour chaque niveau",
+					"params": {
+						"user": "L'adresse de l'utilisateur"
+					},
+					"returns": {
+						"clutch": "Le nombre de NFT Clutch possédés",
+						"lightning": "Le nombre de NFT Lightning possédés",
+						"swift": "Le nombre de NFT Swift possédés"
 					}
 				},
 				"isApprovedForAll(address,address)": {
 					"details": "See {IERC721-isApprovedForAll}."
 				},
-				"mintMyVictoryNFT()": {
-					"details": "Mint un NFT pour soi-même (fonction de convenance)",
+				"mintClutchVictoryNFT(address)": {
+					"details": "Mint un NFT Clutch Victory (niveau 1) - 0-10s restants",
+					"params": {
+						"to": "L'adresse qui recevra le NFT"
+					},
 					"returns": {
 						"_0": "tokenId L'ID du token minté"
 					}
 				},
-				"mintVictoryNFT(address)": {
-					"details": "Mint un NFT de victoire (gratuit)",
+				"mintLightningVictoryNFT(address)": {
+					"details": "Mint un NFT Lightning Victory (niveau 3) - 20-30s restants",
 					"params": {
+						"to": "L'adresse qui recevra le NFT"
+					},
+					"returns": {
+						"_0": "tokenId L'ID du token minté"
+					}
+				},
+				"mintMyVictoryNFT(uint8)": {
+					"details": "Mint un NFT pour soi-même avec niveau spécifié",
+					"params": {
+						"level": "Le niveau de victoire (1, 2, ou 3)"
+					},
+					"returns": {
+						"_0": "tokenId L'ID du token minté"
+					}
+				},
+				"mintSwiftVictoryNFT(address)": {
+					"details": "Mint un NFT Swift Victory (niveau 2) - 10-20s restants",
+					"params": {
+						"to": "L'adresse qui recevra le NFT"
+					},
+					"returns": {
+						"_0": "tokenId L'ID du token minté"
+					}
+				},
+				"mintVictoryNFT(address,uint8)": {
+					"details": "Mint un NFT de victoire avec niveau spécifié",
+					"params": {
+						"level": "Le niveau de victoire (1, 2, ou 3)",
 						"to": "L'adresse qui recevra le NFT"
 					},
 					"returns": {
@@ -812,10 +1146,11 @@
 				"setApprovalForAll(address,bool)": {
 					"details": "See {IERC721-setApprovalForAll}."
 				},
-				"setBaseTokenURI(string)": {
-					"details": "Met à jour l'URI de base (seulement le owner)",
+				"setLevelTokenURI(uint8,string)": {
+					"details": "Met à jour l'URI pour un niveau spécifique (seulement le owner)",
 					"params": {
-						"newBaseTokenURI": "Le nouvel URI de base"
+						"level": "Le niveau (1, 2, ou 3)",
+						"newTokenURI": "Le nouvel URI"
 					}
 				},
 				"supportsInterface(bytes4)": {
@@ -825,7 +1160,13 @@
 					"details": "See {IERC721Metadata-symbol}."
 				},
 				"tokenURI(uint256)": {
-					"details": "Retourne l'URI des métadonnées pour un token Comme tous les NFTs ont la même image, on retourne toujours la même URI"
+					"details": "Retourne l'URI des métadonnées pour un token selon son niveau FONCTION CRUCIALE POUR LES MARKETPLACES",
+					"params": {
+						"tokenId": "L'ID du token"
+					},
+					"returns": {
+						"_0": "L'URI des métadonnées"
+					}
 				},
 				"tokensOfOwner(address)": {
 					"details": "Retourne tous les token IDs possédés par une adresse",
@@ -834,6 +1175,16 @@
 					},
 					"returns": {
 						"_0": "tokenIds La liste des token IDs"
+					}
+				},
+				"tokensOfOwnerWithLevels(address)": {
+					"details": "Retourne tous les token IDs avec leurs niveaux pour un propriétaire",
+					"params": {
+						"owner": "L'adresse du propriétaire"
+					},
+					"returns": {
+						"levels": "La liste des niveaux correspondants",
+						"tokenIds": "La liste des token IDs"
 					}
 				},
 				"totalSupply()": {
@@ -849,7 +1200,6 @@
 					"details": "Transfers ownership of the contract to a new account (`newOwner`). Can only be called by the current owner."
 				}
 			},
-			"title": "MonadTogetherNFT",
 			"version": 1
 		},
 		"userdoc": {
@@ -1003,11 +1353,11 @@
 			]
 		},
 		"MonadTogetherNFT.sol": {
-			"keccak256": "0xb6709b8d15478b2b639cd55bddd8dd269b8b18cd632f04f426d0073ae4b0a16b",
+			"keccak256": "0x7051ec298e34cafbba5defa703bf31d59b38a78d70461d89bdc689e4812447cb",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://137a51d57bb5e71cedb5bad86ea754ad707112bef2e7ba59489cc043493b8b53",
-				"dweb:/ipfs/QmX4gjY7LjCM9qgKSi3TiJTjK8FhYeZwdLVXXC2jYe2o3g"
+				"bzz-raw://f3a1928aeecb887482730bc9f51d4bd3f2d274216b7a9e50ef62fea84423ced3",
+				"dweb:/ipfs/QmeA3hqjyf6HRrVcrUKbSAJ7b7Z1nn2MbRbog8qfmEjM2j"
 			]
 		}
 	},
