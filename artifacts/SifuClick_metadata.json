@@ -1,0 +1,119 @@
+{
+	"compiler": {
+		"version": "0.8.30+commit.73712a01"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "player",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "timestamp",
+						"type": "uint256"
+					}
+				],
+				"name": "Click",
+				"type": "event"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "playerAddress",
+						"type": "address"
+					}
+				],
+				"name": "click",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"name": "clicks",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "totalClicks",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			}
+		],
+		"devdoc": {
+			"details": "Contrat ultra simple pour enregistrer les clicks des joueurs",
+			"kind": "dev",
+			"methods": {
+				"click(address)": {
+					"details": "Fonction principale - enregistre un click",
+					"params": {
+						"playerAddress": "L'adresse du joueur"
+					}
+				}
+			},
+			"title": "SifuClick",
+			"version": 1
+		},
+		"userdoc": {
+			"kind": "user",
+			"methods": {},
+			"version": 1
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"sifuclick.sol": "SifuClick"
+		},
+		"evmVersion": "prague",
+		"libraries": {},
+		"metadata": {
+			"bytecodeHash": "ipfs"
+		},
+		"optimizer": {
+			"enabled": false,
+			"runs": 200
+		},
+		"remappings": []
+	},
+	"sources": {
+		"sifuclick.sol": {
+			"keccak256": "0xa3f12da6685783e9769189a2b0005c21f85ddf5ddeaebb9d65ce609c2d36d1a7",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://58ce77b735ba6049fd1f375b076a1d25cc0a2ca837786d268d4cd18d7ed0daa1",
+				"dweb:/ipfs/Qmbc1QGSZ7ke2Se63QKN1aPecniaG2xozw9puBGxsT2ixQ"
+			]
+		}
+	},
+	"version": 1
+}
